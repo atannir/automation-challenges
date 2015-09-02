@@ -1,0 +1,16 @@
+This challenge is to write a REST API with the ability to:
+- accept submissions of individual words through PUT requests with JSON data (PUT /words/WORDNAME)
+- store all words and the number of times each has been sent
+- accept GET requests for the count of each word (GET /words/WORDNAME)
+- accept GET requests for all the words (GET /words)
+
+The specification for PUT is slightly ambiguous, so I am assuming ONE_WORD in the supplied JSON to be the same as WORDNAME in the example (and match per-request) but different for subsequent requests.
+
+I've decided to choose Node.js as the server technology because I know it will easily support REST services without much trouble, whereas PHP on Apache may require tweaking of .htaccess rewrite rules in some cases. Then again, the modules I'm going to use on Node.js are an added dependency and possible source of frustration and managing versions with npm.
+
+For storage of the words and their counts, I plan start with a JavaScript associative array (if that makes sense in Node) then move to using sqlite as the backend, as it provides persistence for if/when the server is shut down.
+
+Lastly, as a testing framework, I'll write a script in Python to generate, submit, and query the webservice to demonstrate that it is working properly and that the REST interface is the only portion in common between the two programs.
+
+-Adam Tannir
+
