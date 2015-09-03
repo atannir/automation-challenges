@@ -14,3 +14,7 @@ Lastly, as a testing framework, I'll write a script in Python to generate, submi
 
 -Adam Tannir
 
+Current dependencies:
+sqlite3 (installed from npm)
+
+
