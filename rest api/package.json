@@ -4,6 +4,7 @@
   "description": "REST API using node.js to count words and their frequency",
   "main": "wordstore_rest.js",
   "dependencies": {
+    "express": "^4.13.3",
     "sqlite3": "^3.0.10"
   },
   "devDependencies": {},
@@ -19,5 +20,5 @@
     "api",
     "words"
   ],
-  "author": "Adam Tannir",
+  "author": "Adam Tannir"
 }
