@@ -8,8 +8,10 @@
 
 import requests; # http://requests.readthedocs.org/en/latest/user/install/ or apt/yum
 
-conn = {'host': '127.0.0.1',  # {} equivalent to new dict();
-        'port': 8000};
+# conn = {'host': '127.0.0.1',  # {} equivalent to new dict();
+#        'port': 8000};
+
+connstr = "http://127.0.0.1:8000/";
 
 test_terms = { 'one': 1,
                'two': 2,
@@ -31,10 +33,15 @@ test_nonterms = ["python", "ruby", "perl"];
 
 # check original state
 
-r = requests.get('http://' + conn['host'] + ":" + str(conn['port']) + '/words');
+# r = requests.get('http://' + conn['host'] + ":" + str(conn['port']) + '/words');
+r = requests.get(connstr + 'words');
 
 print("Checking empty wordstore. Status: " + str(r.status_code));
 print(r.text); #parse JSON later
+
+# test one put
+
+#r = requests.put(connstr + 'word/' + );
 
 # insert our terms
 
