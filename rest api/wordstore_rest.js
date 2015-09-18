@@ -22,9 +22,14 @@ db.serialize(function(){
 
 
 http.createServer(function (req, res) {
+    var postdata = '';
+    // needed to init with '' to not get undefined
+    
     console.log(req.method + ' request received');
     res.writeHead(200, {'Content-type': 'text/plain'});
-    res.end(req.url);
+
+    req.on('data',function(d) {postdata += d.toString(); console.log(d.toString());});
+    res.end(req.url + " ~~~ " + postdata);
 }).listen(8000); //so we don't step on existing open ports nor require root permissions
 
 

@@ -16,12 +16,12 @@ connstr = "http://127.0.0.1:8000/";
 test_terms = { 'one': 1,
                'two': 2,
                'three': 3,
-               'fifty': 50,
-               'onehundred': 100,
+#               'fifty': 50,
+#               'onehundred': 100,
                'tenthousand': 10000,
-           };
+           }; # remember that dicts are not stored in order
 
-test_nonterms = ["python", "ruby", "perl"];
+test_nonterms = ["python", "ruby", "perl", "common lisp"]; #last is invalid
 
 
 # connection pooling is automatic with requests! Hooray!
@@ -41,14 +41,39 @@ print(r.text); #parse JSON later
 
 # test one put
 
-#r = requests.put(connstr + 'word/' + );
+r = requests.put(connstr + 'word/' + "ABC", data = "{ \"word\": \"ABC\" }" );
 
-# insert our terms
+print("PUT for ABC");
+print(r.text);
 
 
+r = requests.get(connstr + 'words/ABC');
+
+print("GET for ABC");
+print(r.text);
+
+
+# insert all our terms
+
+for t in test_terms.keys():
+    for _ in range(test_terms[t]): # no better way to repeat x times? Maybe a block repeat?
+        r = requests.put(connstr + 'word/' + t, data = "{ \"word\": \"" + t + "\" }" );
 
 # query individually
 
+for t in test_terms.keys():
+    r = requests.get(connstr + 'words/' + t);
+    print(r.text);
+
+# test for terms not included in previous PUTs
+for t in test_nonterms: #array not dictionary
+    r = requests.get(connstr + 'words/' + t);
+    print(r.text);
+
 # return all terms and print
+r = requests.get(connstr + 'words');
+
+print("GET all words and counts");
+print(r.text);
 
 
