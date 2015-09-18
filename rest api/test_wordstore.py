@@ -18,7 +18,7 @@ test_terms = { 'one': 1,
                'three': 3,
 #               'fifty': 50,
 #               'onehundred': 100,
-               'tenthousand': 10000,
+#               'tenthousand': 10000,
            }; # remember that dicts are not stored in order
 
 test_nonterms = ["python", "ruby", "perl", "common lisp"]; #last is invalid
