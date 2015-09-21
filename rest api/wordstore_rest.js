@@ -22,9 +22,9 @@ db.serialize(function(){
 });
 
 //removed separate queries for with/without counts to simplify code.
-var getWord = db.prepare('SELECT word, count from words where word = (?)');
+var getWord = db.prepare('SELECT word, count from words WHERE word = (?)');
 var insertWord = db.prepare('INSERT INTO words (word) VALUES (?)');
-//var incrementWordCount = db.prepare('');
+var incrementWordCount = db.prepare('UPDATE words SET count = count + 1 WHERE word = (?)');
 var getAllWords = db.prepare('SELECT word, count from words');
 
 
@@ -39,8 +39,13 @@ http.createServer(function (req, res) {
     console.log(req.method + ' request received');
     res.writeHead(200, {'Content-type': 'text/plain'});
 
-    req.on('data',function(d) {postdata += d.toString(); console.log(d.toString());});
+    req.on('data', function(d) {
+	postdata += d.toString();
+	console.log(d.toString());
+    });
+    
     res.end(req.url + " ~~~ " + postdata);
+    
 }).listen(8000); //so we don't step on existing open ports nor require root permissions
 
 
