@@ -38,7 +38,7 @@ app.get('/words', function(req, res) {
     // res.send("GET for /words" + req.params);
     console.log("GET for /words" + req.params);
 
-    var outstr = '';
+    var outarr = []; // empty array
     
     getAllWords.all(function(err, row){ // skipped first string parameter, seems OK.
 	if(err !== null) {
@@ -46,11 +46,17 @@ app.get('/words', function(req, res) {
 	}
 	else {
 	    if(row.length > 0)
-		outstr = JSON.stringify(row);
+		for (r in row) {
+		    console.log(JSON.stringify(row)); // returns all entries...
+		    console.log(JSON.stringify(r)); // returns all entries...
+		    console.log(JSON.stringify(row[r])); // returns all entries...
+		    outarr.push(row[r]['word'] + " : " + row[r]['count']);
+		}
 		console.log(row.length);
 	}
 
-	res.status(200).send('{\n' + outstr + '\n}\n');
+	// res.status(200).send('{\n' + outstr + '\n}\n');
+	res.status(200).send(JSON.stringify(outarr));
     });
     
 });
