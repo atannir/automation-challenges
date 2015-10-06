@@ -38,7 +38,7 @@ app.get('/words', function(req, res) {
     // res.send("GET for /words" + req.params);
     console.log("GET for /words" + req.params);
 
-    var outarr = []; // empty array
+    var outarr = {}; // empty object. Using [] made an array which isn't associative by design
     
     getAllWords.all(function(err, row){ // skipped first string parameter, seems OK.
 	if(err !== null) {
@@ -50,7 +50,8 @@ app.get('/words', function(req, res) {
 		    console.log(JSON.stringify(row)); // returns all entries...
 		    console.log(JSON.stringify(r)); // returns all entries...
 		    console.log(JSON.stringify(row[r])); // returns all entries...
-		    outarr.push(row[r]['word'] + " : " + row[r]['count']);
+		    //outarr.push(row[r]['word'] + " : " + row[r]['count']);
+		    outarr[row[r]['word']] = row[r]['count'];
 		}
 		console.log(row.length);
 	}
@@ -112,24 +113,6 @@ app.get('/word/:word', function(req, res){
 });
 
 console.log("GET for /word set up");
-
-
-
-// http.createServer(function (req, res) {
-//     var postdata = '';
-//     // needed to init with '' to not get undefined later
-    
-//     console.log(req.method + ' request received');
-//     res.writeHead(200, {'Content-type': 'text/plain'});
-
-//     req.on('data', function(d) {
-// 	postdata += d.toString();
-// 	console.log(d.toString());
-//     });
-    
-//     res.end(req.url + " ~~~ " + postdata);
-    
-// }).listen(8000); //so we don't step on existing open ports nor require root permissions
 
 
 app.listen(8000); // actually begin our loop
