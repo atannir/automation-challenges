@@ -21,15 +21,15 @@ var db = new sqlite3.Database(":memory:"); //default mode of readwrite | create
 
 
 db.serialize(function(){
-    db.run("CREATE TABLE IF NOT EXISTS words (word TEXT UNIQUE, count INTEGER DEFAULT 1)");
+    db.run("CREATE TABLE IF NOT EXISTS words (word TEXT UNIQUE, ct INTEGER DEFAULT 1)");
     console.log("DB created");
 });
 
 //removed separate queries for with/without counts to simplify code.
-var getWord = db.prepare('SELECT word, count from words WHERE word = (?)');
+var getWord = db.prepare('SELECT word, ct FROM words WHERE word = (?)');
 var insertWord = db.prepare('INSERT INTO words (word) VALUES (?)');
-var incrementWordCount = db.prepare('UPDATE words SET count = count + 1 WHERE word = (?)');
-var getAllWords = db.prepare('SELECT word, count from words');
+var incrementWordCount = db.prepare('UPDATE words SET ct = ct + 1 WHERE word = (?)');
+var getAllWords = db.prepare('SELECT word, ct FROM words');
 
 var oneWordError = '{ "error": "PUT requests must be one word in length" }';
 var badFormatError = '{ "error": "PUT requests must be in proper JSON format" }';
@@ -45,15 +45,16 @@ app.get('/words', function(req, res) {
 	    console.log(err); // was next(err);
 	}
 	else {
-	    if(row.length > 0)
+	    if(row.length) { //assume defined and > 0
 		for (r in row) {
-		    console.log(JSON.stringify(row)); // returns all entries...
-		    console.log(JSON.stringify(r)); // returns all entries...
-		    console.log(JSON.stringify(row[r])); // returns all entries...
+		    //console.log(JSON.stringify(row));
+		    //console.log(JSON.stringify(r));
+		    //console.log(JSON.stringify(row[r]));
 		    //outarr.push(row[r]['word'] + " : " + row[r]['count']);
-		    outarr[row[r]['word']] = row[r]['count'];
+		    outarr[row[r]['word']] = row[r]['ct'];
 		}
 		console.log(row.length);
+	    }	    
 	}
 
 	// res.status(200).send('{\n' + outstr + '\n}\n');
@@ -65,23 +66,25 @@ console.log("GET for /words set up");
 
 
 app.put('/word/:word', function(req, res){
-    // res.send("PUT for /word/" + req.params.word);
+
     console.log("PUT for /word/" + req.params.word);
 
-    getWord.run(req.params.word, function(err, row){
+    getWord.get(req.params.word, function(err, row){
+	//changed from run to get to all, row now less undefined	
+	console.log("getWord" + err + "~~~" + row);
+	
 	if(err !== null) {
 	    console.log(err);
 	}
 	else if (row) {
-	    // no error
+	    // no error but doesn't execute
 	    if (row.length === 1) { //exists so update / increment
-		incrementWordCount.run(req.params.word, function(err, row){});
-		console.log("Incrementing count for " + req.params.word);
+		incrementWordCount.run(req.params.word, function(err, row){
+		    
+		    console.log("Incrementing count for " + req.params.word);
+		});
+
 	    }
-//	    else if (row.length === 0) { // does not exist so create with default count of 1
-//		insertWord.run(req.params.word, null);
-//		console.log("Inserting " + req.params.word);
-//	    }
 	    else { // something weird going on with more than one row for a single word
 		console.log("Something weird going on with " + req.params.word);
 	    }
@@ -89,14 +92,11 @@ app.put('/word/:word', function(req, res){
 	} // end else if (row)
 	else { // row undefined
 	    // does not exist so create with default count of 1
-	    insertWord.run(req.params.word, function(err, row){});
-	    console.log("Inserting " + req.params.word);
+	    insertWord.run(req.params.word, function(err, row){
+		console.log("Inserting " + req.params.word);
+	    });
 	}
-	
-//	else { // something weird going on with more than one row for a single word
-//	    console.log("Returned row is " + row + " for " + req.params.word);
-//	}
-	
+		
     });
 
     res.send("OK for PUT of " + req.params.word );
