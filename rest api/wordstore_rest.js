@@ -3,7 +3,7 @@
 //
 
 var debuglevel = 0;
-
+var util = require('util'); // for util.inspect(); THIS WAS VERY HELPFUL.
 
 // Load HTTP module so we have something to talk to/with
 var http = require('http');
@@ -39,7 +39,7 @@ app.get('/words', function(req, res) {
     console.log("GET for /words" + req.params);
 
     var outarr = {}; // empty object. Using [] made an array which isn't associative by design
-    
+   
     getAllWords.all(function(err, row){ // skipped first string parameter, seems OK.
 	if(err !== null) {
 	    console.log(err); // was next(err);
@@ -69,21 +69,28 @@ app.put('/word/:word', function(req, res){
 
     console.log("PUT for /word/" + req.params.word);
 
-    getWord.get(req.params.word, function(err, row){
+    // Fun fact: I switched to using an object in the 'GET for all words' instead of an
+    // array above but didn't quite realize that the same mechanism was at work for
+    // the row object returned from a query.  The lack of associative-array-like behavior
+    // that I was seeking was also evident below when I was trying to get row.length
+    // and not being sure why it was undefined. Hooray for learning new things!
+    
+    getWord.get(req.params.word, function(err, row) {
 	//changed from run to get to all, row now less undefined	
-	console.log("getWord" + err + "~~~" + row);
-	
+	console.log("getWord " + err + " ~~~ " + row);
+    
 	if(err !== null) {
 	    console.log(err);
 	}
-	else if (row) {
-	    // no error but doesn't execute
-	    if (row.length === 1) { //exists so update / increment
+	
+	else if (row !== undefined) {
+	    console.log("row inspect:" + util.inspect(row, {showHidden: false, depth: 3}));
+	    
+	    if (row['word'] === req.params.word) { //exists so update / increment
 		incrementWordCount.run(req.params.word, function(err, row){
 		    
 		    console.log("Incrementing count for " + req.params.word);
 		});
-
 	    }
 	    else { // something weird going on with more than one row for a single word
 		console.log("Something weird going on with " + req.params.word);

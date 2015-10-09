@@ -17,7 +17,7 @@ test_terms = { 'one': 1,
                'two': 2,
                'three': 3,
                'fifty': 50,
-#              'onehundred': 100,
+              'onehundred': 100,
 #               'tenthousand': 10000,
            }; # remember that dicts are not stored in order
 
