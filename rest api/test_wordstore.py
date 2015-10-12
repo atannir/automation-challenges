@@ -16,9 +16,9 @@ connstr = "http://127.0.0.1:8000/";
 test_terms = { 'one': 1,
                'two': 2,
                'three': 3,
-               'fifty': 50,
-              'onehundred': 100,
-#               'tenthousand': 10000,
+               # 'fifty': 50,
+               # 'onehundred': 100,
+               # 'tenthousand': 10000,
            }; # remember that dicts are not stored in order
 
 test_nonterms = ["python", "ruby", "perl", "common lisp"]; #last is invalid
@@ -62,7 +62,7 @@ for t in test_terms.keys():
 # query individually
 
 for t in test_terms.keys():
-    r = requests.get(connstr + 'words/' + t);
+    r = requests.get(connstr + 'word/' + t);
     print(r.text);
 
 # test for terms not included in previous PUTs

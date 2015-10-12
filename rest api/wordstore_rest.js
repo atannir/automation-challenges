@@ -42,7 +42,7 @@ app.get('/words', function(req, res) {
    
     getAllWords.all(function(err, row){ // skipped first string parameter, seems OK.
 	if(err !== null) {
-	    console.log(err); // was next(err);
+	    console.log(err);
 	}
 	else {
 	    if(row.length) { //assume defined and > 0
@@ -76,15 +76,14 @@ app.put('/word/:word', function(req, res){
     // and not being sure why it was undefined. Hooray for learning new things!
     
     getWord.get(req.params.word, function(err, row) {
-	//changed from run to get to all, row now less undefined	
-	console.log("getWord " + err + " ~~~ " + row);
+	// console.log("getWord " + err + " ~~~ " + util.inspect(row, {showHidden: false, depth: 3}));
     
 	if(err !== null) {
 	    console.log(err);
 	}
 	
 	else if (row !== undefined) {
-	    console.log("row inspect:" + util.inspect(row, {showHidden: false, depth: 3}));
+	    console.log("row inspect: " + util.inspect(row, {showHidden: false, depth: 3}));
 	    
 	    if (row['word'] === req.params.word) { //exists so update / increment
 		incrementWordCount.run(req.params.word, function(err, row){
@@ -93,7 +92,7 @@ app.put('/word/:word', function(req, res){
 		});
 	    }
 	    else { // something weird going on with more than one row for a single word
-		console.log("Something weird going on with " + req.params.word);
+		console.log("Something weird in PUT for " + req.params.word);
 	    }
 	    
 	} // end else if (row)
@@ -106,7 +105,7 @@ app.put('/word/:word', function(req, res){
 		
     });
 
-    res.send("OK for PUT of " + req.params.word );
+    res.status(200).send("PUT OK for " + req.params.word );
     
 });
 
@@ -114,9 +113,41 @@ console.log("PUT for /word set up");
 
 
 app.get('/word/:word', function(req, res){
-    res.send("GET for /word/" + req.params.word);
+    // res.send("GET for /word/" + req.params.word);    
     console.log("GET for /word/" + req.params.word);
+    
+    var outarr = {}; // empty object
 
+    // Handle the case for one result
+    // Handle the case for no result
+    // This a lesson on why test-driven development is useful
+
+    // outarr['foo'] = 7; // works, now why won't it get set below?
+    
+    getWord.all(req.params.word, function(err, row){
+	console.log("getWord single " + err + "~" + util.inspect(row));
+	if(err !== null) {
+	    console.log(err);
+	}
+	else if (row !== undefined) {
+	    console.log("row inspect: " + util.inspect(row, {showHidden: false, depth: 3}));
+	    // console.log("GET, len: " + row.length);
+
+	    
+	    
+	    if (row['word'] === req.params.word){
+		console.log("GET for " + req.params.word);
+		outarr[row['word']] = row['ct'];
+	    }
+	}
+	else {
+	    console.log("Something weird in GET for " + req.params.word);
+	}
+	
+    });
+    console.log(JSON.stringify(outarr));
+    res.status(200).send(JSON.stringify(outarr));
+    
 });
 
 console.log("GET for /word set up");
